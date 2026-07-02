@@ -27,7 +27,14 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT \
 
 COPY --from=builder /app/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Render.com sets $PORT - patch Tomcat's connector port at startup
-ENTRYPOINT ["sh", "-c", "PORT=${PORT:-8080}; sed -i \"s/port=\\\"8080\\\"/port=\\\"$PORT\\\"/g\" /usr/local/tomcat/conf/server.xml; catalina.sh run"]
+# Disable shutdown port (-1) to prevent Render health checks hitting it
+RUN sed -i 's/port="8005" shutdown="SHUTDOWN"/port="-1" shutdown="SHUTDOWN"/' \
+    /usr/local/tomcat/conf/server.xml
+
+# Render.com sets $PORT - patch Tomcat's HTTP connector port at startup
+ENTRYPOINT ["sh", "-c", \
+  "PORT=${PORT:-8080}; \
+   sed -i \"s/port=\\\"8080\\\"/port=\\\"$PORT\\\"/\" /usr/local/tomcat/conf/server.xml; \
+   catalina.sh run"]
 
 EXPOSE 8080
