@@ -14,7 +14,7 @@ public class DBConnection {
         String db   = System.getenv("MYSQLDATABASE");
         if (host != null && port != null && db != null) {
             return "jdbc:mysql://" + host + ":" + port + "/" + db
-                    + "?useSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                    + "?useSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC&verifyServerCertificate=false";
         }
         return "jdbc:mysql://localhost:3306/food_app?useSSL=false&serverTimezone=UTC";
     }
