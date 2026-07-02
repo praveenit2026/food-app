@@ -12,7 +12,9 @@ RUN find src/main/java -name '*.java' > sources.txt \
           -cp /usr/local/tomcat/lib/servlet-api.jar:/usr/local/tomcat/lib/jsp-api.jar:src/main/webapp/WEB-INF/lib/mysql-connector-j-8.2.0.jar \
           @sources.txt
 
-RUN jar -cvf ROOT.war -C build/classes . -C src/main/webapp .
+RUN mkdir -p src/main/webapp/WEB-INF/classes \
+ && cp -r build/classes/* src/main/webapp/WEB-INF/classes/ \
+ && jar -cvf ROOT.war -C src/main/webapp .
 
 # ── Stage 2: Runtime ──────────────────────────────────────────────
 FROM tomcat:10.1-jdk17
