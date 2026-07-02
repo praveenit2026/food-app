@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    // Read from environment variables (set on Railway/Render)
-    // Falls back to localhost defaults for local development
     private static String getUrl() {
         String host = System.getenv("MYSQLHOST");
         String port = System.getenv("MYSQLPORT");
         String db   = System.getenv("MYSQLDATABASE");
         if (host != null && port != null && db != null) {
+            System.out.println("[DBConnection] Connecting to Aiven: " + host + ":" + port + "/" + db);
             return "jdbc:mysql://" + host + ":" + port + "/" + db
                     + "?useSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC&verifyServerCertificate=false";
         }
+        System.out.println("[DBConnection] Env vars not found, using localhost fallback");
         return "jdbc:mysql://localhost:3306/food_app?useSSL=false&serverTimezone=UTC";
     }
 
@@ -29,30 +29,21 @@ public class DBConnection {
         return pass != null ? pass : "mysql";
     }
 
-    private static Connection connection = null;
-
     public static Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection(getUrl(), getUser(), getPassword());
-            }
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(getUrl(), getUser(), getPassword());
         } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("[DBConnection] ERROR: " + e.getMessage());
             e.printStackTrace();
+            throw new RuntimeException("Database connection failed: " + e.getMessage(), e);
         }
-        return connection;
     }
 
+    // Kept for backward compatibility - no-op since we no longer use singleton
     public static void closeConnection() {
-        if (connection != null) {
-            try {
-                if (!connection.isClosed()) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        // Connections are closed by try-with-resources in each DAO
     }
 }
+
 
