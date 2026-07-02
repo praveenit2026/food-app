@@ -1,0 +1,19 @@
+# Build folders
+build/
+bin/
+out/
+
+# Generated files
+sources.txt
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# OS/IDE files
+.DS_Store
+Thumbs.db
+.idea/
+*.class
+*.log
