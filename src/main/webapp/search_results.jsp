@@ -424,6 +424,64 @@ body {
     color: var(--text-light);
     border: 1px solid var(--border);
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .nav-logo {
+        order: 1;
+    }
+    .nav-actions {
+        order: 2;
+        margin-left: auto;
+        gap: 6px;
+    }
+    .nav-search {
+        order: 3;
+        flex: 1 0 100%;
+        margin: 0;
+        max-width: 100%;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .nav-user-pill {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    .nav-user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .restaurant-grid {
+        grid-template-columns: 1fr;
+    }
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .menu-card {
+        padding: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .search-wrapper {
+        margin: 20px auto 40px;
+        padding: 0 16px;
+    }
+}
 </style>
 </head>
 <body>

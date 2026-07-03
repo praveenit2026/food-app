@@ -150,6 +150,16 @@ input[type="password"]:focus {
     color: #9b2c2c;
     border: 1px solid #feb2b2;
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 480px) {
+    .signup-card {
+        padding: 24px;
+    }
+    .logo {
+        font-size: 28px;
+    }
+}
 </style>
 </head>
 <body>

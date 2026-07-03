@@ -158,6 +158,16 @@ input[type="password"]:focus {
     color: #22543d;
     border: 1px solid #9ae6b4;
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px;
+    }
+    .logo {
+        font-size: 28px;
+    }
+}
 </style>
 </head>
 <body>

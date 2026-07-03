@@ -435,6 +435,103 @@ body {
 .add-submit-btn:hover {
     background: var(--bg-soft);
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .nav-logo {
+        order: 1;
+    }
+    .nav-actions {
+        order: 2;
+        margin-left: auto;
+        gap: 6px;
+    }
+    .nav-search {
+        order: 3;
+        flex: 1 0 100%;
+        margin: 0;
+        max-width: 100%;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .nav-user-pill {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    .nav-user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+    
+    .restaurant-details {
+        margin-top: 20px;
+    }
+    .rest-info h1 {
+        font-size: 22px;
+    }
+    .rest-meta-row {
+        gap: 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .rest-header-card {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    .rest-rating-box {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 12px;
+    }
+    .rating-stars {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-section {
+        margin-bottom: 40px;
+    }
+    .menu-item-card {
+        gap: 16px;
+        padding: 16px 0;
+    }
+    .menu-item-details {
+        padding-right: 0;
+    }
+    .menu-item-action {
+        width: 96px;
+        height: 96px;
+    }
+    .menu-item-name {
+        font-size: 15px;
+    }
+    .menu-item-desc {
+        font-size: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
 </style>
 </head>
 <body>

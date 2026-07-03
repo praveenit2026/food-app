@@ -252,6 +252,46 @@ textarea:focus, select:focus {
     font-weight: 800;
     color: var(--text-dark);
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .nav-logo {
+        order: 1;
+    }
+    .nav-actions {
+        order: 2;
+        margin-left: auto;
+        gap: 6px;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .nav-user-pill {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    .nav-user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+    .checkout-wrapper {
+        margin: 20px auto 40px;
+        padding: 0 16px;
+    }
+    .panel-card {
+        padding: 16px;
+    }
+}
 </style>
 </head>
 <body>

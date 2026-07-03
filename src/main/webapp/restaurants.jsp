@@ -518,6 +518,123 @@ body {
     color: var(--text-mid);
     margin-bottom: 8px;
 }
+
+/* ── RESPONSIVE DESIGN ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .nav-logo {
+        order: 1;
+    }
+    .nav-location {
+        order: 2;
+        margin-right: auto;
+        font-size: 13px;
+    }
+    .nav-actions {
+        order: 3;
+        margin-left: auto;
+        gap: 6px;
+    }
+    .nav-search {
+        order: 4;
+        flex: 1 0 100%;
+        margin: 0;
+        max-width: 100%;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .nav-user-pill {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    .nav-user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+    
+    .hero {
+        padding: 30px 20px;
+    }
+    .hero-text h1 {
+        font-size: 28px;
+    }
+    .hero-text p {
+        font-size: 14px;
+    }
+    .hero-badge {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+    
+    .content-wrapper {
+        padding: 0 16px 40px;
+    }
+    .divider {
+        margin: 24px -16px;
+    }
+    
+    .categories-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        padding: 4px 0 12px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .categories-grid::-webkit-scrollbar {
+        display: none;
+    }
+    .category-chip {
+        flex: 0 0 auto;
+    }
+    .category-img {
+        width: 76px;
+        height: 76px;
+    }
+    .category-label {
+        font-size: 12px;
+    }
+    
+    .restaurants-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    .card-img-wrap {
+        height: 140px;
+    }
+    .card-body {
+        padding: 12px;
+    }
+    .card-name {
+        font-size: 15px;
+    }
+    .card-meta-row {
+        font-size: 12px;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-location {
+        display: none;
+    }
+    .restaurants-grid {
+        grid-template-columns: 1fr;
+    }
+    .card-img-wrap {
+        height: 180px;
+    }
+}
 </style>
 </head>
 <body>
