@@ -100,3 +100,23 @@ The project includes pre-configured settings for [Render](https://render.com) us
    - `MYSQLUSER`
    - `MYSQLPASSWORD`
 3. Click deploy. Render will build the Tomcat multi-stage Docker image and map the dynamic port environment variable automatically.
+
+---
+
+## 🔄 Keep-Alive (Preventing Render.com Sleep)
+
+Render's free/starter tier spins down web services after **15 minutes of inactivity**. To prevent this, a lightweight health-check endpoint is included and should be pinged every **10 minutes** by an external cron service.
+
+### Health Endpoint
+```
+GET https://foodiehub.onrender.com/health.jsp
+```
+Returns: `OK | FoodieHub is alive | <timestamp>` (plain text, no DB query)
+
+### Setup with cron-job.org (Free)
+1. Sign up at [cron-job.org](https://cron-job.org)
+2. Click **"CREATE CRONJOB"** and fill in:
+   - **Title**: `FoodieHub Keep-Alive`
+   - **URL**: `https://foodiehub.onrender.com/health.jsp`
+   - **Schedule**: Every `10` minutes (`*/10 * * * *`)
+3. Save — the service will never sleep again. ✅
