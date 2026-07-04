@@ -30,9 +30,21 @@ public class DBConnection {
     }
 
     public static Connection getConnection() {
+        String host = System.getenv("MYSQLHOST");
+        String port = System.getenv("MYSQLPORT");
+        String db   = System.getenv("MYSQLDATABASE");
+        boolean usingEnv = (host != null && port != null && db != null);
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(getUrl(), getUser(), getPassword());
+            if (usingEnv) {
+                try {
+                    return DriverManager.getConnection(getUrl(), getUser(), getPassword());
+                } catch (SQLException e) {
+                    System.err.println("[DBConnection] WARNING: Failed to connect to host " + host + " (" + e.getMessage() + "). Falling back to localhost...");
+                }
+            }
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306/food_app?useSSL=false&serverTimezone=UTC", "root", "mysql");
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println("[DBConnection] ERROR: " + e.getMessage());
             e.printStackTrace();
