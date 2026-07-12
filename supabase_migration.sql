@@ -1,5 +1,5 @@
 -- ============================================================
---  FoodieHub – PostgreSQL Migration (Supabase)
+--  FoodieHub - PostgreSQL Migration (Supabase)
 --  Converted from MySQL dump dated 2026-07-04
 -- ============================================================
 
@@ -61,15 +61,15 @@ SELECT setval('restaurant_restaurant_id_seq', (SELECT MAX(restaurant_id) FROM re
 CREATE TABLE menu (
   menu_id       SERIAL PRIMARY KEY,
   restaurant_id INT REFERENCES restaurant(restaurant_id) ON DELETE CASCADE,
-  item_name     VARCHAR(100) NOT NULL,
+  name          VARCHAR(100) NOT NULL,
   description   TEXT,
   price         DECIMAL(10,2) NOT NULL,
   category      VARCHAR(50),
-  image_url     VARCHAR(255),
+  image_path    VARCHAR(255),
   is_available  BOOLEAN DEFAULT TRUE
 );
 
-INSERT INTO menu (menu_id, restaurant_id, item_name, description, price, category, image_url, is_available) VALUES
+INSERT INTO menu (menu_id, restaurant_id, name, description, price, category, image_path, is_available) VALUES
   (1,  1,  'Classic Burger',        'Juicy beef patty with lettuce and tomato',       120.00, 'Main Course', NULL, TRUE),
   (2,  1,  'Cheese Fries',          'Crispy fries loaded with melted cheese',          80.00, 'Sides',       NULL, TRUE),
   (3,  1,  'Onion Rings',           'Golden fried onion rings with dipping sauce',     90.00, 'Sides',       NULL, TRUE),
@@ -156,12 +156,12 @@ CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
   order_id      INT           REFERENCES orders(order_id) ON DELETE CASCADE,
   menu_id       INT           REFERENCES menu(menu_id),
-  item_name     VARCHAR(100),
+  name          VARCHAR(100),
   quantity      INT,
   price         DECIMAL(10,2)
 );
 
-INSERT INTO order_items (order_item_id, order_id, menu_id, item_name, quantity, price) VALUES
+INSERT INTO order_items (order_item_id, order_id, menu_id, name, quantity, price) VALUES
   (1,  1,  1,  'Classic Burger',       5, 120.00),
   (2,  2,  1,  'Classic Burger',       4, 120.00),
   (3,  3,  4,  'Chicken Biryani',      3, 180.00),
