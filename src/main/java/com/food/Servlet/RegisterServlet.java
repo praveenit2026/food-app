@@ -3,6 +3,7 @@ package com.food.Servlet;
 import com.food.DAO.UserDAO;
 import com.food.implementation.UserDAOImpl;
 import com.food.model.User;
+import com.food.util.DBConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,8 +28,15 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String eamil = req.getParameter("email");
+        // Friendly message when DB is unreachable
+        if (!DBConnection.isAvailable()) {
+            req.setAttribute("errorMessage", "Registration is temporarily unavailable (database offline). You can still browse restaurants and menus. Please try again later.");
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
+            return;
+        }
+
+        String name     = req.getParameter("name");
+        String eamil    = req.getParameter("email");
         String password = req.getParameter("password");
 
         User user = new User(name, eamil, password);

@@ -3,6 +3,7 @@ package com.food.Servlet;
 import com.food.DAO.UserDAO;
 import com.food.implementation.UserDAOImpl;
 import com.food.model.User;
+import com.food.util.DBConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,6 +29,13 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Friendly message when DB is unreachable
+        if (!DBConnection.isAvailable()) {
+            req.setAttribute("errorMessage", "The database is temporarily unavailable. You can still browse restaurants and menus. Please try logging in later.");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+            return;
+        }
+
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 

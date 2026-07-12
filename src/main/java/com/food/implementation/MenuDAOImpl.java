@@ -3,6 +3,7 @@ package com.food.implementation;
 import com.food.DAO.MenuDAO;
 import com.food.model.Menu;
 import com.food.util.DBConnection;
+import com.food.util.FallbackData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,9 @@ public class MenuDAOImpl implements MenuDAO {
 
     @Override
     public boolean addMenu(Menu menu) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(INSERT_MENU)) {
             ps.setInt(1, menu.getRestaurantId());
             ps.setString(2, menu.getName());
@@ -38,25 +41,31 @@ public class MenuDAOImpl implements MenuDAO {
 
     @Override
     public Menu getMenu(int menuId) {
-        Menu menu = null;
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) {
+            for (Menu m : FallbackData.getAllMenus()) {
+                if (m.getMenuId() == menuId) return m;
+            }
+            return null;
+        }
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_MENU_BY_ID)) {
             ps.setInt(1, menuId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    menu = extractMenuFromResultSet(rs);
-                }
+                if (rs.next()) return extractMenuFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return menu;
+        return null;
     }
 
     @Override
     public List<Menu> getMenuByRestaurant(int restaurantId) {
+        Connection con = DBConnection.getConnection();
+        if (con == null) return FallbackData.getMenuByRestaurant(restaurantId);
         List<Menu> menus = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection();
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_MENU_BY_RESTAURANT)) {
             ps.setInt(1, restaurantId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -66,14 +75,17 @@ public class MenuDAOImpl implements MenuDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return FallbackData.getMenuByRestaurant(restaurantId);
         }
         return menus;
     }
 
     @Override
     public List<Menu> getAllMenus() {
+        Connection con = DBConnection.getConnection();
+        if (con == null) return FallbackData.getAllMenus();
         List<Menu> menus = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection();
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_ALL_MENUS);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -81,13 +93,16 @@ public class MenuDAOImpl implements MenuDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return FallbackData.getAllMenus();
         }
         return menus;
     }
 
     @Override
     public boolean updateMenu(Menu menu) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(UPDATE_MENU)) {
             ps.setInt(1, menu.getRestaurantId());
             ps.setString(2, menu.getName());
@@ -105,7 +120,9 @@ public class MenuDAOImpl implements MenuDAO {
 
     @Override
     public boolean deleteMenu(int menuId) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(DELETE_MENU)) {
             ps.setInt(1, menuId);
             return ps.executeUpdate() > 0;

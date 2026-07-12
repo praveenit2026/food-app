@@ -3,6 +3,7 @@ package com.food.Servlet;
 import com.food.DAO.RestaurantDAO;
 import com.food.implementation.RestaurantDAOImpl;
 import com.food.model.Restaurant;
+import com.food.util.DBConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,11 +28,16 @@ public class RestaurantRegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
+        if (!DBConnection.isAvailable()) {
+            req.setAttribute("errorMessage", "Restaurant registration is temporarily unavailable (database offline). Please try again later.");
+            req.getRequestDispatcher("/restaurant_register.jsp").forward(req, resp);
+            return;
+        }
+        String name        = req.getParameter("name");
         String cuisineType = req.getParameter("cuisineType");
-        String address = req.getParameter("address");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        String address     = req.getParameter("address");
+        String email       = req.getParameter("email");
+        String password    = req.getParameter("password");
         int eta = 30; // default
 
         try {

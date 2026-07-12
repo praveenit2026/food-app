@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
+    /** True when the last connection attempt succeeded. */
+    private static volatile boolean dbAvailable = true;
+
     private static String getUrl() {
         String host = System.getenv("PGHOST");
         String port = System.getenv("PGPORT");
         String db   = System.getenv("PGDATABASE");
         if (host != null && port != null && db != null) {
-            System.out.println("[DBConnection] Connecting to Supabase PostgreSQL: " + host + ":" + port + "/" + db);
-            return "jdbc:postgresql://" + host + ":" + port + "/" + db
-                    + "?sslmode=require";
+            return "jdbc:postgresql://" + host + ":" + port + "/" + db + "?sslmode=require";
         }
-        System.out.println("[DBConnection] Env vars not found, using localhost fallback");
         return "jdbc:postgresql://localhost:5432/food_app";
     }
 
@@ -29,31 +29,36 @@ public class DBConnection {
         return pass != null ? pass : "postgres";
     }
 
+    /**
+     * Returns a live Connection, or null if the database is unreachable.
+     * Never throws — callers should check for null and use FallbackData.
+     */
     public static Connection getConnection() {
-        String host = System.getenv("PGHOST");
-        boolean usingEnv = (host != null);
-
         try {
             Class.forName("org.postgresql.Driver");
-            if (usingEnv) {
-                try {
-                    return DriverManager.getConnection(getUrl(), getUser(), getPassword());
-                } catch (SQLException e) {
-                    System.err.println("[DBConnection] WARNING: Failed to connect to Supabase (" + e.getMessage() + "). Falling back to localhost...");
-                }
+            Connection conn = DriverManager.getConnection(getUrl(), getUser(), getPassword());
+            if (!dbAvailable) {
+                System.out.println("[DBConnection] Database connection restored.");
             }
-            return DriverManager.getConnection("jdbc:postgresql://localhost:5432/food_app", "postgres", "postgres");
+            dbAvailable = true;
+            return conn;
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println("[DBConnection] ERROR: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Database connection failed: " + e.getMessage(), e);
+            if (dbAvailable) {
+                // Log only on first failure to avoid log spam
+                System.err.println("[DBConnection] Database unavailable – serving fallback data. Reason: " + e.getMessage());
+            }
+            dbAvailable = false;
+            return null; // Callers must handle null
         }
     }
 
-    // Kept for backward compatibility - no-op since we no longer use singleton
-    public static void closeConnection() {
-        // Connections are closed by try-with-resources in each DAO
+    /** Whether the last connection attempt succeeded. */
+    public static boolean isAvailable() {
+        return dbAvailable;
     }
+
+    // Kept for backward compatibility
+    public static void closeConnection() {}
 }
 
 

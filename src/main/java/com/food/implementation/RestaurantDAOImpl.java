@@ -3,6 +3,7 @@ package com.food.implementation;
 import com.food.DAO.RestaurantDAO;
 import com.food.model.Restaurant;
 import com.food.util.DBConnection;
+import com.food.util.FallbackData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,9 @@ public class RestaurantDAOImpl implements RestaurantDAO {
 
     @Override
     public boolean addRestaurant(Restaurant restaurant) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(INSERT_RESTAURANT)) {
             ps.setString(1, restaurant.getName());
             ps.setString(2, restaurant.getCuisineType());
@@ -39,42 +42,46 @@ public class RestaurantDAOImpl implements RestaurantDAO {
 
     @Override
     public Restaurant getRestaurant(int restaurantId) {
-        Restaurant restaurant = null;
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return FallbackData.getRestaurant(restaurantId);
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_RESTAURANT_BY_ID)) {
             ps.setInt(1, restaurantId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    restaurant = extractRestaurantFromResultSet(rs);
+                    return extractRestaurantFromResultSet(rs);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return restaurant;
+        return null;
     }
 
     @Override
     public Restaurant getRestaurantByEmail(String email) {
-        Restaurant restaurant = null;
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return null; // Login not possible without DB
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_RESTAURANT_BY_EMAIL)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    restaurant = extractRestaurantFromResultSet(rs);
+                    return extractRestaurantFromResultSet(rs);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return restaurant;
+        return null;
     }
 
     @Override
     public List<Restaurant> getAllRestaurants() {
+        Connection con = DBConnection.getConnection();
+        if (con == null) return FallbackData.getAllRestaurants();
         List<Restaurant> list = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection();
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_ALL_RESTAURANTS);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -82,13 +89,16 @@ public class RestaurantDAOImpl implements RestaurantDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return FallbackData.getAllRestaurants(); // Fallback on mid-query failure too
         }
         return list;
     }
 
     @Override
     public boolean updateRestaurant(Restaurant restaurant) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(UPDATE_RESTAURANT)) {
             ps.setString(1, restaurant.getName());
             ps.setString(2, restaurant.getCuisineType());
@@ -107,7 +117,9 @@ public class RestaurantDAOImpl implements RestaurantDAO {
 
     @Override
     public boolean deleteRestaurant(int restaurantId) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(DELETE_RESTAURANT)) {
             ps.setInt(1, restaurantId);
             return ps.executeUpdate() > 0;

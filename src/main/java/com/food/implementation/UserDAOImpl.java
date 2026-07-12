@@ -12,16 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
-    private static final String INSERT_USER_SQL = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-    private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
+    private static final String INSERT_USER_SQL  = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    private static final String SELECT_USER_BY_ID    = "SELECT * FROM users WHERE id = ?";
     private static final String SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
-    private static final String SELECT_ALL_USERS = "SELECT * FROM users";
-    private static final String UPDATE_USER_SQL = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
-    private static final String DELETE_USER_SQL = "DELETE FROM users WHERE id = ?";
+    private static final String SELECT_ALL_USERS     = "SELECT * FROM users";
+    private static final String UPDATE_USER_SQL  = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
+    private static final String DELETE_USER_SQL  = "DELETE FROM users WHERE id = ?";
 
     @Override
     public boolean addUser(User user) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false; // DB unavailable – registration not possible
+        try (con;
              PreparedStatement ps = con.prepareStatement(INSERT_USER_SQL)) {
             ps.setString(1, user.getName());
             ps.setString(2, user.getEamil());
@@ -35,42 +37,42 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User getUser(int userId) {
-        User user = null;
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return null;
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_USER_BY_ID)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    user = extractUserFromResultSet(rs);
-                }
+                if (rs.next()) return extractUserFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return user;
+        return null;
     }
 
     @Override
     public User getUserByEmail(String email) {
-        User user = null;
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return null; // Login not possible without DB
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_USER_BY_EMAIL)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    user = extractUserFromResultSet(rs);
-                }
+                if (rs.next()) return extractUserFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return user;
+        return null;
     }
 
     @Override
     public List<User> getAllUsers() {
+        Connection con = DBConnection.getConnection();
+        if (con == null) return new ArrayList<>();
         List<User> users = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection();
+        try (con;
              PreparedStatement ps = con.prepareStatement(SELECT_ALL_USERS);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -84,7 +86,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean updateUser(User user) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(UPDATE_USER_SQL)) {
             ps.setString(1, user.getName());
             ps.setString(2, user.getEamil());
@@ -99,7 +103,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean deleteUser(int userId) {
-        try (Connection con = DBConnection.getConnection();
+        Connection con = DBConnection.getConnection();
+        if (con == null) return false;
+        try (con;
              PreparedStatement ps = con.prepareStatement(DELETE_USER_SQL)) {
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;

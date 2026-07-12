@@ -3,6 +3,7 @@ package com.food.Servlet;
 import com.food.DAO.OrderDAO;
 import com.food.implementation.OrderDAOImpl;
 import com.food.model.*;
+import com.food.util.DBConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -58,6 +59,13 @@ public class OrderServlet extends HttpServlet {
         String paymentMode = req.getParameter("paymentMode");
         if (paymentMode == null || paymentMode.trim().isEmpty()) {
             paymentMode = "COD";
+        }
+
+        // Guard: cannot save order without a working database
+        if (!DBConnection.isAvailable()) {
+            req.setAttribute("errorMessage", "Sorry, ordering is temporarily unavailable because the database is offline. Please try again shortly.");
+            req.getRequestDispatcher("/checkout.jsp").forward(req, resp);
+            return;
         }
 
         int restaurantId = 0;
