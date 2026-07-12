@@ -7,44 +7,42 @@ import java.sql.SQLException;
 public class DBConnection {
 
     private static String getUrl() {
-        String host = System.getenv("MYSQLHOST");
-        String port = System.getenv("MYSQLPORT");
-        String db   = System.getenv("MYSQLDATABASE");
+        String host = System.getenv("PGHOST");
+        String port = System.getenv("PGPORT");
+        String db   = System.getenv("PGDATABASE");
         if (host != null && port != null && db != null) {
-            System.out.println("[DBConnection] Connecting to Aiven: " + host + ":" + port + "/" + db);
-            return "jdbc:mysql://" + host + ":" + port + "/" + db
-                    + "?useSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC&verifyServerCertificate=false";
+            System.out.println("[DBConnection] Connecting to Supabase PostgreSQL: " + host + ":" + port + "/" + db);
+            return "jdbc:postgresql://" + host + ":" + port + "/" + db
+                    + "?sslmode=require";
         }
         System.out.println("[DBConnection] Env vars not found, using localhost fallback");
-        return "jdbc:mysql://localhost:3306/food_app?useSSL=false&serverTimezone=UTC";
+        return "jdbc:postgresql://localhost:5432/food_app";
     }
 
     private static String getUser() {
-        String user = System.getenv("MYSQLUSER");
-        return user != null ? user : "root";
+        String user = System.getenv("PGUSER");
+        return user != null ? user : "postgres";
     }
 
     private static String getPassword() {
-        String pass = System.getenv("MYSQLPASSWORD");
-        return pass != null ? pass : "mysql";
+        String pass = System.getenv("PGPASSWORD");
+        return pass != null ? pass : "postgres";
     }
 
     public static Connection getConnection() {
-        String host = System.getenv("MYSQLHOST");
-        String port = System.getenv("MYSQLPORT");
-        String db   = System.getenv("MYSQLDATABASE");
-        boolean usingEnv = (host != null && port != null && db != null);
+        String host = System.getenv("PGHOST");
+        boolean usingEnv = (host != null);
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
             if (usingEnv) {
                 try {
                     return DriverManager.getConnection(getUrl(), getUser(), getPassword());
                 } catch (SQLException e) {
-                    System.err.println("[DBConnection] WARNING: Failed to connect to host " + host + " (" + e.getMessage() + "). Falling back to localhost...");
+                    System.err.println("[DBConnection] WARNING: Failed to connect to Supabase (" + e.getMessage() + "). Falling back to localhost...");
                 }
             }
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/food_app?useSSL=false&serverTimezone=UTC", "root", "mysql");
+            return DriverManager.getConnection("jdbc:postgresql://localhost:5432/food_app", "postgres", "postgres");
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println("[DBConnection] ERROR: " + e.getMessage());
             e.printStackTrace();

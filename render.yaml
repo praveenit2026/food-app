@@ -6,13 +6,13 @@ services:
     dockerContext: .
     plan: starter
     envVars:
-      - key: MYSQLHOST
-        value: sql12.freesqldatabase.com
-      - key: MYSQLPORT
-        value: "3306"
-      - key: MYSQLDATABASE
-        value: sql12832249
-      - key: MYSQLUSER
-        value: sql12832249
-      - key: MYSQLPASSWORD
-        value: FiqNekIwsB
+      - key: PGHOST
+        value: db.flqkcfuehagmbeuaydjx.supabase.co
+      - key: PGPORT
+        value: "5432"
+      - key: PGDATABASE
+        value: postgres
+      - key: PGUSER
+        value: postgres
+      - key: PGPASSWORD
+        value: Praveen@2005*1%

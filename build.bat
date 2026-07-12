@@ -18,7 +18,7 @@ echo [1/4] Generating sources list...
 dir /s /b "%SRC_DIR%\src\main\java\*.java" > "%SRC_DIR%\sources.txt"
 
 echo [2/4] Compiling Java classes...
-javac -d "%CLASS_OUT%" -cp "%TOMCAT_HOME%\lib\servlet-api.jar;%TOMCAT_HOME%\lib\jsp-api.jar;%SRC_DIR%\src\main\webapp\WEB-INF\lib\mysql-connector-j-8.2.0.jar" @"%SRC_DIR%\sources.txt"
+javac -d "%CLASS_OUT%" -cp "%TOMCAT_HOME%\lib\servlet-api.jar;%TOMCAT_HOME%\lib\jsp-api.jar;%SRC_DIR%\src\main\webapp\WEB-INF\lib\postgresql-42.7.3.jar" @"%SRC_DIR%\sources.txt"
 
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] Compilation failed!

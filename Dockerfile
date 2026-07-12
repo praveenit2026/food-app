@@ -9,7 +9,7 @@ RUN mkdir -p build/classes
 
 RUN find src/main/java -name '*.java' > sources.txt \
  && javac -d build/classes \
-          -cp /usr/local/tomcat/lib/servlet-api.jar:/usr/local/tomcat/lib/jsp-api.jar:src/main/webapp/WEB-INF/lib/mysql-connector-j-8.2.0.jar \
+          -cp /usr/local/tomcat/lib/servlet-api.jar:/usr/local/tomcat/lib/jsp-api.jar:src/main/webapp/WEB-INF/lib/postgresql-42.7.3.jar \
           @sources.txt
 
 RUN mkdir -p src/main/webapp/WEB-INF/classes \
