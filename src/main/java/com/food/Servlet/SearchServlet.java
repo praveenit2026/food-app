@@ -31,7 +31,7 @@ public class SearchServlet extends HttpServlet {
             
             try (Connection con = DBConnection.getConnection()) {
                 // 1. Search Restaurants
-                String sqlRest = "SELECT * FROM restaurant WHERE name LIKE ? OR cuisine_type LIKE ?";
+                String sqlRest = "SELECT * FROM restaurant WHERE name ILIKE ? OR cuisine_type ILIKE ?";
                 try (PreparedStatement ps = con.prepareStatement(sqlRest)) {
                     ps.setString(1, searchPattern);
                     ps.setString(2, searchPattern);
@@ -52,10 +52,11 @@ public class SearchServlet extends HttpServlet {
                 }
 
                 // 2. Search Menus
-                String sqlMenu = "SELECT * FROM menu WHERE name LIKE ? OR description LIKE ?";
+                String sqlMenu = "SELECT * FROM menu WHERE name ILIKE ? OR description ILIKE ? OR category ILIKE ?";
                 try (PreparedStatement ps = con.prepareStatement(sqlMenu)) {
                     ps.setString(1, searchPattern);
                     ps.setString(2, searchPattern);
+                    ps.setString(3, searchPattern);
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
                             matchingMenus.add(new Menu(
